@@ -40,16 +40,11 @@ public class UserRepository {
      * @param oldData
      * @return (boolean) success
      */
-    public boolean updateCustomerRegistory(String oldData) {
+    public boolean updateCustomerRegistory(String oldData, String newData) {
         String filePath = "C:\\Users\\최연우\\IdeaProjects\\Starfucks\\src\\com\\beagle\\java\\projects\\starfucks\\repository\\database\\customerRepositorys.txt";
         String newFilePath = "C:\\Users\\최연우\\IdeaProjects\\Starfucks\\src\\com\\beagle\\java\\projects\\starfucks\\repository\\database\\pseudoRepository.txt";
         File pseudoFile = new File(newFilePath);
-        String[] inputArr = oldData.split("/");
-        String newData = "";
-        for (int i = 0; i < inputArr.length-1; i++) {
-            newData += inputArr;
-        }
-        newData += "X;";
+
         boolean success = false;
 
         try {

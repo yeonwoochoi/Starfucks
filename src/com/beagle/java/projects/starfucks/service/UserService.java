@@ -6,6 +6,7 @@ import com.beagle.java.projects.starfucks.repository.OrderRepository;
 import com.beagle.java.projects.starfucks.repository.UserRepository;
 import com.beagle.java.projects.starfucks.utils.Utils;
 
+import javax.jws.soap.SOAPBinding;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -16,7 +17,7 @@ public class UserService {
      * Method to add customer data to CustomerRepository.txt when a customer places an order
      * @return (boolean) success
      */
-    public boolean createCustomer(String[] orderName, int[] orderPrice, int[] orderCount) {
+    public String[] createCustomer(String[] orderName, int[] orderPrice, int[] orderCount) {
         ArrayList arrayList = new ArrayList();
         FoodRepository foodRepository = new FoodRepository();
         OrderRepository orderRepository = new OrderRepository();
@@ -57,19 +58,13 @@ public class UserService {
         } else {
             success = false;
         }
-        return success;
+        String[] output = new String[2];
+        if (success) {
+            output[0] = orderNumberStr;
+            output[1] = totalTimeStr;
+        }
+        return output;
     }
-
-
-
-
-    public boolean pickUpFood(int orderNumber) {
-        UserRepository userRepository = new UserRepository();
-        String inputData = orderNumber + "/" + ;
-        userRepository.updateCustomerRegistory();
-    }
-
-
 
 
 
@@ -134,8 +129,37 @@ public class UserService {
     }
 
 
+    /**
+     * Update CustomerRegistory.txt when customers pick up food.
+     * @param orderNumberStr
+     * @param totalTimeStr
+     * @return
+     */
+    public boolean pickUpFood(String orderNumberStr, String totalTimeStr) {
+        UserRepository userRepository = new UserRepository();
+        String oldData = orderNumberStr + "/" + totalTimeStr + "/O;";
+        String[] inputArr = oldData.split("/");
+        String newData = "";
+        for (int i = 0; i < inputArr.length-1; i++) {
+            newData += inputArr;
+        }
+        newData += "X;";
+        boolean success = userRepository.updateCustomerRegistory(oldData, newData);
+        return success;
+    }
 
 
+    /**
+     * delete Customer Data in CustomerRegistory.txt when customer get out 
+     * @return
+     */
+    public boolean deleteCustomer(String orderNumberStr, String totalTimeStr) {
+        UserRepository userRepository = new UserRepository();
+        String inputStr = orderNumberStr + "/" + totalTimeStr + "/";
+        String newStr = "";
+        boolean success = userRepository.updateCustomerRegistory(inputStr, newStr);
+        return success;
+    }
 
 
 }
