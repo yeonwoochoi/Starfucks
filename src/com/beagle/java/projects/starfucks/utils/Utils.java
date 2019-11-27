@@ -3,6 +3,9 @@ package com.beagle.java.projects.starfucks.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * class with methods used throughout the project
+ */
 public class Utils {
 
     /**
