@@ -1,39 +1,47 @@
 package com.beagle.java.projects.starfucks.service;
 
 import com.beagle.java.projects.starfucks.repository.FoodRepository;
-import com.beagle.java.projects.starfucks.repository.OrderRepository;
 import com.beagle.java.projects.starfucks.repository.UserRepository;
 import com.beagle.java.projects.starfucks.utils.Utils;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
+
 public class UserService {
+    FoodRepository foodRepository = new FoodRepository();
+    UserRepository userRepository = new UserRepository();
+    Utils utils = new Utils();
 
 
     /**
      * Method to add customer data to CustomerRepository.txt when a customer places an order
-     * @return (boolean) success
+     * @return (String[]) {orderNumberStr, waitingTimeStr}
      */
-    public String[] createCustomer(String[] orderName, int[] orderPrice, int[] orderCount) {
+    public String[] createCustomer(String[] orderName, String[] orderPrice, String[] orderCount) {
+
         ArrayList arrayList = new ArrayList();
-        FoodRepository foodRepository = new FoodRepository();
-        OrderRepository orderRepository = new OrderRepository();
-        UserRepository userRepository = new UserRepository();
-        Utils utils = new Utils();
+
 
         String eachName;
         String eachPrice;
         String eachCount;
 
+        int[] orderPriceArr = utils.StringArrayToIntArray(orderPrice);
+        int[] orderCountArr = utils.StringArrayToIntArray(orderCount);
+
         // get consumed calculateOrderTime
-        int totalTime = foodRepository.calculateOrderTime(orderName, orderCount);
-        String  totalTimeStr = utils.intToString(totalTime);
+        int waitingTime = foodRepository.calculateOrderTime(orderName, orderCountArr);
+        String  waitingTimeStr = utils.intToString(waitingTime);
 
         // create ArrayList orderContent
         for (int i = 0; i < orderName.length; i++) {
             eachName = orderName[i];
-            eachPrice = utils.intToString(orderPrice[i]);
-            eachCount = utils.intToString(orderCount[i]);
+            eachPrice = utils.intToString(orderPriceArr[i]);
+            eachCount = utils.intToString(orderCountArr[i]);
 
             String[] object = {eachName, eachPrice, eachCount};
 
@@ -43,12 +51,12 @@ public class UserService {
         }
 
         // get orderNumber
-        String orderNumberStr = orderRepository.givingOrderNumber();
+        String orderNumberStr = userRepository.givingOrderNumber();
 
         // Store received order in CustomerRepository.txt
-        String inputStr = orderNumberStr + "/" + totalTimeStr + "/O" + ";";
+        String inputStr = orderNumberStr + "/" + waitingTimeStr + "/O" + ";";
         boolean success1 = userRepository.saveToCustomerRegistory(inputStr);
-        boolean success2 = orderRepository.updateOrderNumber();
+        boolean success2 = userRepository.updateOrderNumber();
         boolean success;
         if (success1 && success2) {
             success = true;
@@ -58,83 +66,83 @@ public class UserService {
         String[] output = new String[2];
         if (success) {
             output[0] = orderNumberStr;
-            output[1] = totalTimeStr;
+            output[1] = waitingTimeStr;
         }
         return output;
     }
 
 
+    /**
+     * Method that returns user data as an array and returns the row corresponding to the input index
+     * @param index
+     * @return (String[]) Return an array of data about the corresponding row
+     */
+    public String[] readUserRow(int index) {
+
+
+        String[] userArr = userRepository.readAllUserData();
+
+        String[] eachUserArr;
+        String[] eachUserRowArr = new String[userArr.length];
+
+
+        for (int i = 0; i < userArr.length; i++) {
+            eachUserArr = userArr[i].split("/");
+            eachUserRowArr[i] = eachUserArr[index];
+        }
+
+        return eachUserRowArr;
+    }
+
+
 
     /**
-     * Method to make receipt of input order
-     * @param orderNumber
-     * @param orderContent
-     * @return (String) Converting the receipt to a string using the toString method of the Receipt class
+     * Method to read data corresponding to input data through file path
+     * @param content
+     * @return (String[]) Return an array of user data for the corresponding column
      */
-    public String makeReceipt(int orderNumber, ArrayList orderContent) {
+    public String[] readUserColumn(String content) {
+        String filePath = "C:\\Users\\최연우\\IdeaProjects\\Starfucks\\src\\com\\beagle\\java\\projects\\starfucks\\repository\\database\\CustomerRepository.txt";
+        String output = "";
+        String[] outputArray = new String[3];
+        try {
+            FileReader fileReader = new FileReader(filePath);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
 
-        // Load data stored in Order object and declare it as variable
-        Utils utils = new Utils();
-        orderContent.trimToSize();
+            String line = "";
+            String[] stringArr;
 
-        // Declare String array to store ordered food name and price
-        String[] nameArr = new String[orderContent.size()];
-        String[] priceArr = new String[orderContent.size()];
-        String[] countArr = new String[orderContent.size()];
+            while ((line = bufferedReader.readLine()) != null) {
+                stringArr = line.split(";");
+                for (int i = 0 ; i < stringArr.length; i++) {
+                    if (stringArr[i].contains(content)) {
+                        output += stringArr[i];
+                    }
+                }
+            }
+            bufferedReader.close();
 
-        // Save the ordered food name and price
-        for (int i = 0; i < orderContent.size(); i++) {
-            String[] eachStrArr = (String[]) orderContent.get(i);
-            nameArr[i] = eachStrArr[0];
+            outputArray = output.split("/");
+
+
+            return outputArray;
+        } catch (FileNotFoundException e) {
+            outputArray[0] = String.valueOf(e);
+        } catch (IOException e) {
+            outputArray[0] = String.valueOf(e);
         }
-
-        for (int i = 0; i < orderContent.size(); i++) {
-            String[] eachStrArr = (String[]) orderContent.get(i);
-            priceArr[i] = eachStrArr[1];
-        }
-
-        for (int i = 0; i < orderContent.size(); i++) {
-            String[] eachStrArr = (String[]) orderContent.get(i);
-            countArr[i] = eachStrArr[2];
-        }
-
-        int[] newPriceArr = utils.StringArrayToIntArray(priceArr);
-        int[] newCountArr = utils.StringArrayToIntArray(countArr);
-
-
-        // variable declaration for making receipt
-        String output;
-        String content = "";
-
-
-        // Calculate the total price
-        int total = 0;
-        for (int i = 0; i < newPriceArr.length; i++) {
-            total += (newPriceArr[i] * newCountArr[i]);
-        }
-
-        // add receipt content
-        for (int i = 0; i < nameArr.length; i++) {
-            content += nameArr[i] + "  " + newPriceArr[i] + "  " + newCountArr[i] + "\n";
-        }
-
-        output = "order number : " + orderNumber + "\n\n" + content + "\n" + "total :  " + total + "\n\n";
-
-
-        return output;
-
+        return outputArray;
     }
 
 
     /**
      * Update CustomerRegistory.txt when customers pick up food.
      * @param orderNumberStr
-     * @param totalTimeStr
+     * @param waitingTimeStr
      * @return
      */
-    public boolean pickUpFood(String orderNumberStr, String totalTimeStr) {
-        UserRepository userRepository = new UserRepository();
-        String oldData = orderNumberStr + "/" + totalTimeStr + "/O;";
+    public boolean updateCustomer(String orderNumberStr, String waitingTimeStr) {
+        String oldData = orderNumberStr + "/" + waitingTimeStr + "/O;";
         String[] inputArr = oldData.split("/");
         String newData = "";
         for (int i = 0; i < inputArr.length-1; i++) {
@@ -150,12 +158,53 @@ public class UserService {
      * delete Customer Data in CustomerRegistory.txt when customer get out
      * @return
      */
-    public boolean deleteCustomer(String orderNumberStr, String totalTimeStr) {
-        UserRepository userRepository = new UserRepository();
-        String inputStr = orderNumberStr + "/" + totalTimeStr + "/";
+    public boolean deleteCustomer(String orderNumberStr) {
+        String inputStr = orderNumberStr + "/";
         String newStr = "";
         boolean success = userRepository.updateCustomerRegistory(inputStr, newStr);
         return success;
+    }
+
+
+
+
+    /**
+     * Method to make receipt of input order
+     * @param orderNumberStr
+     * @param orderName
+     * @param orderPrice
+     * @param orderCount
+     * @return (String) Converting the receipt to a string using the toString method of the Receipt class
+     */
+    public String makeReceipt(String orderNumberStr, String[] orderName, String [] orderPrice, String[] orderCount) {
+
+        // Load data stored in Order object and declare it as variable
+
+        int[] newPriceArr = utils.StringArrayToIntArray(orderPrice);
+        int[] newCountArr = utils.StringArrayToIntArray(orderCount);
+        int orderNumber = utils.StringToInt(orderNumberStr);
+
+        // variable declaration for making receipt
+        String output;
+        String content = "";
+
+
+        // Calculate the total price
+        int total = 0;
+        for (int i = 0; i < newPriceArr.length; i++) {
+            total += (newPriceArr[i] * newCountArr[i]);
+        }
+
+        // add receipt content
+        for (int i = 0; i < orderName.length; i++) {
+            content += orderName[i] + "  " + newPriceArr[i] + "  " + newCountArr[i] + "\n";
+        }
+
+        output = "order number : " + orderNumber + "\n\n" + content + "\n" + "total :  " + total + "\n\n";
+
+
+        return output;
+
     }
 
 

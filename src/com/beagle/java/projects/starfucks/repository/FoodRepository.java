@@ -1,5 +1,6 @@
 package com.beagle.java.projects.starfucks.repository;
 
+import com.beagle.java.projects.starfucks.service.FoodService;
 import com.beagle.java.projects.starfucks.utils.Utils;
 
 import java.io.*;
@@ -10,6 +11,9 @@ import java.io.*;
  * Food data should not be created or updated or deleted. So there is no method about 'create', 'update' and 'delete'
  */
 public class FoodRepository {
+
+    FoodService foodService = new FoodService();
+    Utils utils = new Utils();
 
     /**
      * Method that retrieves all food data stored in text file and returns as String
@@ -39,102 +43,43 @@ public class FoodRepository {
     }
 
 
-    /**
-     * Method that returns food data as an array and returns the row corresponding to the input index
-     * @param index
-     * @return (String[]) Return an array of data about the corresponding row
-     */
-    public String[] readFoodRow(int index) {
-        FoodRepository foodRepository = new FoodRepository();
-
-
-        String foodStr = foodRepository.readAllFoodData();
-        String[] foodArr = foodStr.split(";");
-
-        String[] eachFoodArr;
-        String[] eachFoodNameArr = new String[foodArr.length];
-
-
-        for (int i = 0; i < foodArr.length; i++) {
-            eachFoodArr = foodArr[i].split("/");
-            eachFoodNameArr[i] = eachFoodArr[index];
-        }
-
-        return eachFoodNameArr;
-    }
 
 
 
-    /**
-     * Method to read data corresponding to input data through file path
-     * @param content
-     * @return (String[]) Return an array of food data for the corresponding column
-     */
-    public String[] readFoodColumn(String content) {
-        String filePath = "C:\\Users\\최연우\\IdeaProjects\\Starfucks\\src\\com\\beagle\\java\\projects\\starfucks\\repository\\database\\FoodRepository.txt";
-        String output = "";
-        String[] outputArray = new String[4];
-        try {
-            FileReader fileReader = new FileReader(filePath);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-            String line = "";
-            String[] stringArr;
-
-            while ((line = bufferedReader.readLine()) != null) {
-                stringArr = line.split(";");
-                for (int i = 0 ; i < stringArr.length; i++) {
-                    if (stringArr[i].contains(content)) {
-                        output += stringArr[i];
-                    }
-                }
-            }
-            bufferedReader.close();
-
-            outputArray = output.split("/");
 
 
-            return outputArray;
-        } catch (FileNotFoundException e) {
-            outputArray[0] = String.valueOf(e);
-        } catch (IOException e) {
-            outputArray[0] = String.valueOf(e);
-        }
-        return outputArray;
-    }
 
 
 
 
     /**
-     * Method to calculate total time to prepare ordered menus.
+     * Method to calculate waiting time to prepare ordered menus.
      * @param orderName
      * @param orderCount
-     * @return (int) total time taken
+     * @return (int) waiting time taken
      */
     public int calculateOrderTime(String[] orderName, int[] orderCount) {
 
         // variable declaration
-        FoodRepository foodRepository = new FoodRepository();
-        Utils utils = new Utils();
-        int totalTime = 0;
+
+        int waitingTime = 0;
         int eachCount;
-        int eachTotalTime;
+        int eachWaitingTimeStr;
 
         // Get time info for each food from FoodRepository.txt and merge all together
         for (int i = 0; i < orderName.length; i++) {
             eachCount = orderCount[i];
 
-            String[] findArr = foodRepository.readFoodColumn(orderName[i]);
+            String[] findArr = foodService.readFoodColumn(orderName[i]);
 
             int eachTime = utils.StringToInt(findArr[3]);
 
-            eachTotalTime = eachTime * eachCount;
+            eachWaitingTimeStr = eachTime * eachCount;
 
-            totalTime += eachTotalTime;
+            waitingTime += eachWaitingTimeStr;
         }
 
-        return totalTime;
+        return waitingTime;
     }
 
 

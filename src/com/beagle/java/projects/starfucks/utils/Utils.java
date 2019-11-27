@@ -13,7 +13,7 @@ public class Utils {
      * @param inputArr
      * @return string array with null values ​​removed
      */
-    public String[] removeNullValue(String[] inputArr) {
+    public static String[] removeNullValue(String[] inputArr) {
 
         List<String> list = new ArrayList<String>();
 
@@ -33,7 +33,7 @@ public class Utils {
      * @param input
      * @return Value converted to String type
      */
-    public String intToString(int input)  {
+    public static String intToString(int input)  {
         String output = Integer.toString(input);
         return output;
     }
@@ -45,7 +45,7 @@ public class Utils {
      * @param input
      * @return Value converted to int type
      */
-    public int StringToInt(String input) {
+    public static int StringToInt(String input) {
         int output = Integer.parseInt(input);
         return output;
     }
@@ -56,7 +56,7 @@ public class Utils {
      * @param input
      * @return (int) array
      */
-    public int[] StringArrayToIntArray (String[] input) {
+    public static int[] StringArrayToIntArray (String[] input) {
         Utils utils = new Utils();
         int[] newObjects = new int[input.length];
         for (int i = 0; i < input.length; i++) {
@@ -71,7 +71,7 @@ public class Utils {
      * @param input
      * @return (String) array
      */
-    public String[] IntArrayToStringArray (int[] input) {
+    public static String[] IntArrayToStringArray (int[] input) {
         Utils utils = new Utils();
         String[] newObjects = new String[input.length];
         for (int i = 0; i < input.length; i++) {

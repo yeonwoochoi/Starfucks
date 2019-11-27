@@ -1,22 +1,23 @@
 package com.beagle.java.projects.starfucks.service;
 
 import com.beagle.java.projects.starfucks.repository.FoodRepository;
-import com.beagle.java.projects.starfucks.utils.Utils;
 
-import java.io.File;
-import java.util.ArrayList;
+import java.io.*;
 
+
+/**
+ * class with method to read food data in foodRepository.txt
+ */
 
 public class FoodService {
+
+    FoodRepository foodRepository = new FoodRepository();
 
     /**
      * Method that returns all data in FoodRepository.txt as string
      * @return String menu
      */
     public String showMenuList() {
-
-        FoodRepository foodRepository = new FoodRepository();
-
 
         String beverageStr = "== beverage ==\n\n";
         String dessertStr = "== dessert ==\n\n";
@@ -50,45 +51,64 @@ public class FoodService {
     }
 
 
-
-
     /**
-     * Method to check if input data is a value stored in Food Repository
-     * @param orderName
-     * @return (boolean) success
+     * Method that returns food data as an array and returns the row corresponding to the input index
+     * @param index
+     * @return (String[]) Return an array of data about the corresponding row
      */
-    public boolean checkOrderName(String orderName) {
+    public String[] readFoodRow(int index) {
+
+        String foodStr = foodRepository.readAllFoodData();
+        String[] foodArr = foodStr.split(";");
+
+        String[] eachFoodArr;
+        String[] eachFoodRowArr = new String[foodArr.length];
 
 
-        // Import data from FoodRepository.txt and create array by subtracting only data related to food name
-        FoodRepository foodRepository = new FoodRepository();
-        String[] productNameArr = foodRepository.readFoodRow(1);
-
-
-
-        // count the number of times input data and repository data match
-        int count = 0;
-        for (int i = 0; i < productNameArr.length; i++) {
-            if(productNameArr[i].equals(orderName)) {
-                count += 1;
-            }
+        for (int i = 0; i < foodArr.length; i++) {
+            eachFoodArr = foodArr[i].split("/");
+            eachFoodRowArr[i] = eachFoodArr[index];
         }
 
-
-        // Determine success with i, the number of times input data and repository data match.
-        boolean success;
-        if (count == 0) {
-            success = false;
-        } else if (count == 1){
-            success = true;
-        } else {
-            success = false;
-        }
-
-
-        return success;
-
+        return eachFoodRowArr;
     }
 
+    /**
+     * Method to read data corresponding to input data through file path
+     * @param content
+     * @return (String[]) Return an array of food data for the corresponding column
+     */
+    public String[] readFoodColumn(String content) {
+        String filePath = "C:\\Users\\최연우\\IdeaProjects\\Starfucks\\src\\com\\beagle\\java\\projects\\starfucks\\repository\\database\\FoodRepository.txt";
+        String output = "";
+        String[] outputArray = new String[4];
+        try {
+            FileReader fileReader = new FileReader(filePath);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            String line = "";
+            String[] stringArr;
+
+            while ((line = bufferedReader.readLine()) != null) {
+                stringArr = line.split(";");
+                for (int i = 0 ; i < stringArr.length; i++) {
+                    if (stringArr[i].contains(content)) {
+                        output += stringArr[i];
+                    }
+                }
+            }
+            bufferedReader.close();
+
+            outputArray = output.split("/");
+
+
+            return outputArray;
+        } catch (FileNotFoundException e) {
+            outputArray[0] = String.valueOf(e);
+        } catch (IOException e) {
+            outputArray[0] = String.valueOf(e);
+        }
+        return outputArray;
+    }
 
 }

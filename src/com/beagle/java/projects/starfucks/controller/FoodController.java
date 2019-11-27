@@ -1,72 +1,73 @@
 package com.beagle.java.projects.starfucks.controller;
 
-import com.beagle.java.projects.starfucks.repository.FoodRepository;
+import com.beagle.java.projects.starfucks.service.FoodService;
 import com.beagle.java.projects.starfucks.utils.Utils;
 
-import java.util.ArrayList;
 
+/**
+ * Class consisting of methods to find out whether data about food is an appropriate value and data needed in foodRepository.txt
+ */
 public class FoodController {
+
+    Utils utils = new Utils();
+    FoodService foodService = new FoodService();
+
 
 
     /**
-     * Method to make receipt of input order
-     * @param orderNumber
-     * @param orderContent
-     * @return (String) Converting the receipt to a string using the toString method of the Receipt class
+     * check whether input food number is between 1 and 20
+     * @param foodNumberStr
+     * @return (boolean) success
      */
-    public String makeReceipt(int orderNumber, ArrayList orderContent) {
+    public boolean checkInputFoodNumber(String foodNumberStr) {
+        boolean success;
+        int foodNumber = utils.StringToInt(foodNumberStr);
 
-        // Load data stored in Order object and declare it as variable
-        Utils utils = new Utils();
-        orderContent.trimToSize();
-
-        // Declare String array to store ordered food name and price
-        String[] nameArr = new String[orderContent.size()];
-        String[] priceArr = new String[orderContent.size()];
-        String[] countArr = new String[orderContent.size()];
-
-        // Save the ordered food name and price
-        for (int i = 0; i < orderContent.size(); i++) {
-            String[] eachStrArr = (String[]) orderContent.get(i);
-            nameArr[i] = eachStrArr[0];
+        if (foodNumber >= 1 && foodNumber <= 20) {
+            success = true;
+        } else {
+            success = false;
         }
-
-        for (int i = 0; i < orderContent.size(); i++) {
-            String[] eachStrArr = (String[]) orderContent.get(i);
-            priceArr[i] = eachStrArr[1];
-        }
-
-        for (int i = 0; i < orderContent.size(); i++) {
-            String[] eachStrArr = (String[]) orderContent.get(i);
-            countArr[i] = eachStrArr[2];
-        }
-
-        int[] newPriceArr = utils.StringArrayToIntArray(priceArr);
-        int[] newCountArr = utils.StringArrayToIntArray(countArr);
-
-
-        // variable declaration for making receipt
-        String output;
-        String content = "";
-
-
-        // Calculate the total price
-        int total = 0;
-        for (int i = 0; i < newPriceArr.length; i++) {
-            total += (newPriceArr[i] * newCountArr[i]);
-        }
-
-        // add receipt content
-        for (int i = 0; i < nameArr.length; i++) {
-            content += nameArr[i] + "  " + newPriceArr[i] + "  " + newCountArr[i] + "\n";
-        }
-
-        output = "order number : " + orderNumber + "\n\n" + content + "\n" + "total :  " + total + "\n\n";
-
-
-        return output;
-
+        return success;
     }
+
+    /**
+     * check whether input quantity is more than 0
+     * @param inputQuantityStr
+     * @return (boolean) success
+     */
+    public boolean checkInputQuantity(String inputQuantityStr) {
+        boolean success;
+        int inputQuantity = utils.StringToInt(inputQuantityStr);
+
+        if (inputQuantity > 0) {
+            success = true;
+        } else {
+            success = false;
+        }
+        return success;
+    }
+
+    /**
+     * A method to find food data in the foodRepository that matches the input data
+     * @param foodNumberStr
+     * @return (String[]) {foodNumber, foodName, foodPrice, foodConsumedTime}
+     */
+    public String[] findFoodData(String foodNumberStr) {
+        String[] foodColumn = foodService.readFoodColumn(foodNumberStr + "/");
+        return foodColumn;
+    }
+
+
+    /**
+     * show Menu List
+     * @return (String) menu list
+     */
+    public String showMenuList() {
+        String menu = foodService.showMenuList();
+        return menu;
+    }
+
 
 
 }

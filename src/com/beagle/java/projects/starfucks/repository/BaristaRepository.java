@@ -4,7 +4,15 @@ import com.beagle.java.projects.starfucks.utils.Utils;
 
 import java.io.*;
 
+
+/**
+ * Class consisting of methods that CRUD data in baristaRepository.txt based on data from Barista Service
+ */
 public class BaristaRepository {
+
+    BaristaRepository baristaRepository = new BaristaRepository();
+    Utils utils = new Utils();
+
 
 
     /**
@@ -14,8 +22,6 @@ public class BaristaRepository {
     public String createNewBarista() {
 
         // variable declaration
-        BaristaRepository baristaRepository = new BaristaRepository();
-        Utils utils = new Utils();
 
         // get all barista info as string array
         String[] strArr = baristaRepository.readAllBaristaData();
@@ -103,73 +109,6 @@ public class BaristaRepository {
 
 
 
-    /**
-     * Method that returns barista data as an array and returns the row corresponding to the input index
-     * @param index
-     * @return (String[]) Return an array of data about the corresponding row
-     */
-    public String[] readBaristaRow(int index) {
-        BaristaRepository baristaRepository = new BaristaRepository();
-
-
-        String[] baristaArr = baristaRepository.readAllBaristaData();
-
-        String[] eachBaristaArr;
-        String[] eachBaristaRowArr = new String[baristaArr.length];
-
-
-        for (int i = 0; i < baristaArr.length; i++) {
-            eachBaristaArr = baristaArr[i].split("/");
-            eachBaristaRowArr[i] = eachBaristaArr[index];
-        }
-
-        return eachBaristaRowArr;
-    }
-
-
-
-    /**
-     * Method to read data corresponding to input data through file path
-     * @param content
-     * @return (String[]) Return an array of barista data for the corresponding column
-     */
-    public String[] readBaristaColumn(String content) {
-        String filePath = "C:\\Users\\최연우\\IdeaProjects\\Starfucks\\src\\com\\beagle\\java\\projects\\starfucks\\repository\\database\\BaristaRepository.txt";
-        String output = "";
-        String[] outputArray = new String[3];
-        try {
-            FileReader fileReader = new FileReader(filePath);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-            String line = "";
-            String[] stringArr;
-
-            while ((line = bufferedReader.readLine()) != null) {
-                stringArr = line.split(";");
-                for (int i = 0 ; i < stringArr.length; i++) {
-                    if (stringArr[i].contains(content)) {
-                        output += stringArr[i];
-                    }
-                }
-            }
-            bufferedReader.close();
-
-            outputArray = output.split("/");
-
-
-            return outputArray;
-        } catch (FileNotFoundException e) {
-            outputArray[0] = String.valueOf(e);
-        } catch (IOException e) {
-            outputArray[0] = String.valueOf(e);
-        }
-        return outputArray;
-    }
-
-
-
-
-
 
 
 
@@ -179,9 +118,6 @@ public class BaristaRepository {
      */
     public String updateBarista() {
 
-        // variables declaration
-        BaristaRepository baristaRepository = new BaristaRepository();
-        Utils utils = new Utils();
 
         // get all barista info as string array
         String[] strArr = baristaRepository.readAllBaristaData();
