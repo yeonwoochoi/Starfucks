@@ -1,13 +1,10 @@
 package com.beagle.java.projects.starfucks.service;
 
-import com.beagle.java.projects.starfucks.controller.BaristaController;
 import com.beagle.java.projects.starfucks.repository.FoodRepository;
 import com.beagle.java.projects.starfucks.repository.OrderRepository;
 import com.beagle.java.projects.starfucks.repository.UserRepository;
 import com.beagle.java.projects.starfucks.utils.Utils;
 
-import javax.jws.soap.SOAPBinding;
-import java.io.File;
 import java.util.ArrayList;
 
 public class UserService {
@@ -150,7 +147,7 @@ public class UserService {
 
 
     /**
-     * delete Customer Data in CustomerRegistory.txt when customer get out 
+     * delete Customer Data in CustomerRegistory.txt when customer get out
      * @return
      */
     public boolean deleteCustomer(String orderNumberStr, String totalTimeStr) {
