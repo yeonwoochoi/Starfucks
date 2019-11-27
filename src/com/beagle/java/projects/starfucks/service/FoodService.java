@@ -13,7 +13,7 @@ public class FoodService {
      * Method that returns all data in FoodRepository.txt as string
      * @return String menu
      */
-    public String  ShowMenuList() {
+    public String showMenuList() {
 
         FoodRepository foodRepository = new FoodRepository();
 
@@ -57,7 +57,7 @@ public class FoodService {
      * @param orderName
      * @return (boolean) success
      */
-    public boolean CheckOrderName(String orderName) {
+    public boolean checkOrderName(String orderName) {
 
 
         // Import data from FoodRepository.txt and create array by subtracting only data related to food name
